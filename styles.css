@@ -455,7 +455,7 @@ color:white
 
 /* Footer */
 .footer {
-    background: var(--text-color);
+    background: black;
     color: var(--white);
     padding: 2rem 0;
     text-align: center;
