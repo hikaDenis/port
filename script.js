@@ -13,35 +13,49 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // Contact form handling
-const contactForm = document.querySelector('.contact-form');
+
+            // Contact form handling with Formspree
+const contactForm = document.querySelector(".contact-form");
+
 if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
+    contactForm.addEventListener("submit", async function (e) {
         e.preventDefault();
-        
-        // Get form values
-        const name = this.querySelector('input[type="text"]').value;
-        const email = this.querySelector('input[type="email"]').value;
-        const message = this.querySelector('textarea').value;
-        
-        // Simple validation
-        if (name && email && message) {
-            // Show success message
-            const originalText = this.querySelector('button').textContent;
-            this.querySelector('button').textContent = 'Message Sent! ✓';
-            this.querySelector('button').style.background = '#2ecc71';
-            
-            // Reset form
-            this.reset();
-            
-            // Restore button after 3 seconds
-            setTimeout(() => {
-                this.querySelector('button').textContent = originalText;
-                this.querySelector('button').style.background = '';
-            }, 3000);
+
+        const button = this.querySelector("button");
+        const originalText = button.textContent;
+
+        button.textContent = "Sending...";
+        button.disabled = true;
+
+        try {
+            const response = await fetch(this.action, {
+                method: "POST",
+                body: new FormData(this),
+                headers: {
+                    Accept: "application/json"
+                }
+            });
+
+            if (response.ok) {
+                button.textContent = "✓ Message Sent!";
+                button.style.background = "#2ecc71";
+                this.reset();
+            } else {
+                button.textContent = "Failed to Send";
+                button.style.background = "#e74c3c";
+            }
+        } catch (error) {
+            button.textContent = "Network Error";
+            button.style.background = "#e74c3c";
         }
+
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.disabled = false;
+            button.style.background = "";
+        }, 3000);
     });
 }
-
 // Scroll animations
 const observerOptions = {
     threshold: 0.1,
